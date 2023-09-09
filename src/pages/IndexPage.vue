@@ -1,95 +1,55 @@
 <template>
   <q-page class="flex flex-center">
-    <div class="q-gutter-y-md" style="width: 60%">
-      <q-card bordered>
-        <q-tabs
-          v-model="tab"
-          dense
-          class="text-grey"
-          active-color="primary"
-          indicator-color="primary"
-          align="justify"
-          narrow-indicator
-        >
-          <q-tab name="login" label="Login" />
-          <q-tab name="register" label="Register" />
-        </q-tabs>
-        <q-separator />
+    <div class="q-gutter-y-md desktop_size mobile_size">
+      <q-card flat style="border-radius: 10px">
+        <q-card-section class="text-center">
+          <p style="font-weight: 800; font-size: larger; color: #017951">
+            <q-icon name="grain" style="font-size: 30px" /> <br />Login to the
+            System
+          </p>
+          <hr />
+        </q-card-section>
 
-        <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="login">
-            <q-input
-              dense
-              outlined
-              type="email"
-              label="Email"
-              v-model="formData.email"
-              class="q-mb-sm"
-            />
-            <q-input
-              dense
-              outlined
-              type="password"
-              label="Password"
-              v-model="formData.password"
-              class="q-mb-sm"
-            />
+        <q-card-section>
+          <q-input
+            rounded
+            dense
+            outlined
+            type="email"
+            label="Email"
+            v-model="formData.email"
+            class="q-mb-sm"
+          />
+          <q-input
+            rounded
+            dense
+            outlined
+            type="password"
+            label="Password"
+            v-model="formData.password"
+            class="q-mb-sm"
+          />
 
-            <small style="color: red">{{ errorMsg }}</small>
+          <small style="color: red">{{ errorMsg }}</small>
 
-            <q-btn
-              icon="mail"
-              dense
-              label="Login"
-              dark
-              color="primary"
-              @click="login"
-              class="full-width"
-              :loading="loadLogin"
-              rounded
-            />
-          </q-tab-panel>
-
-          <q-tab-panel name="register">
-            <q-input
-              dense
-              outlined
-              type="text"
-              label="Name"
-              v-model="formData.name"
-              class="q-mb-sm"
-            />
-            <q-input
-              dense
-              outlined
-              type="email"
-              label="Email"
-              v-model="formData.email"
-              class="q-mb-sm"
-            />
-            <q-input
-              dense
-              outlined
-              type="password"
-              label="Password"
-              v-model="formData.password"
-              class="q-mb-sm"
-            />
-
-            <small style="color: red">{{ errorMsg }}</small>
-
-            <q-btn
-              icon="mail"
-              dense
-              label="Register"
-              dark
-              color="primary"
-              @click="register"
-              rounded
-              class="full-width"
-            />
-          </q-tab-panel>
-        </q-tab-panels>
+          <q-btn
+            icon="person"
+            dense
+            label="Login"
+            dark
+            color="primary"
+            @click="login"
+            class="full-width"
+            :loading="loadLogin"
+            rounded
+            unelevated
+          />
+          <div class="text-center">
+            <small style="color: #017951"
+              ><i>For any queries, please contact your admin.</i></small
+            >
+          </div>
+        </q-card-section>
       </q-card>
     </div>
   </q-page>
@@ -100,8 +60,11 @@ import { reactive, ref } from "vue";
 import { useAuthStore } from "src/stores/auth-store";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
+// import { send_push_notification } from "src/utilities/web_push_sub";
+// import { useProductStore } from "src/stores/product-store";
 
-const tab = ref("login");
+// const product_store = useProductStore();
+// const tab = ref("login");
 const loadLogin = ref(false);
 const errorMsg = ref("");
 
@@ -127,26 +90,16 @@ const login = async () => {
     loadLogin.value = true;
     const res = await user_store.login(userLogin);
 
-    if (res.status === "success") redirectUser(res.message, "green");
-    else displayErrorMsg(res.message);
-  } else notifyMsg("Email and password are required", "red");
-};
-
-// Register
-const register = async () => {
-  const userRegister = {
-    name: formData.name.trim(),
-    email: formData.email.trim(),
-    password: formData.password.trim(),
-  };
-
-  if (userRegister.name && userRegister.email && userRegister.password) {
-    loadLogin.value = true;
-    const res = await user_store.login(userLogin);
-
-    if (res.status === "success") redirectUser(res.message, "green");
-    else displayErrorMsg(res.message);
-  } else notifyMsg("Name, Email and password are required", "red");
+    if (res.status === "success") {
+      redirectUser(res.message, "green");
+    } else {
+      loadLogin.value = false;
+      displayErrorMsg(res.message);
+    }
+  } else {
+    loadLogin.value = false;
+    notifyMsg("Email and password are required", "red");
+  }
 };
 
 const notifyMsg = (message, color) => {
@@ -164,8 +117,20 @@ const displayErrorMsg = (message) => {
 };
 
 const redirectUser = (message, color) => {
+  router.push("/dashboard");
   loadLogin.value = false;
   notifyMsg(message, color);
-  router.push("/dashboard");
 };
 </script>
+
+<style scoped>
+.desktop_size {
+  width: 40%;
+}
+
+@media screen and (max-width: 768px) {
+  .mobile_size {
+    width: 80%;
+  }
+}
+</style>

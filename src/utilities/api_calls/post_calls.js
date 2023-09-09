@@ -1,4 +1,4 @@
-import { base_url } from "../helpers";
+import { base_url, forceLogout } from "../helpers";
 
 const post_call = async (payload, path) => {
   const res = await fetch(`${base_url}/${path}`, {
@@ -8,6 +8,8 @@ const post_call = async (payload, path) => {
     },
     body: JSON.stringify(payload),
   });
+
+  forceLogout(res.status);
 
   const res_data = res.json();
 
@@ -22,6 +24,8 @@ const post_call_logout = async (path, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  forceLogout(res.status);
 
   const res_data = res.json();
 

@@ -8,7 +8,6 @@
       title="Roles"
       :rows="roles"
       :columns="role_columns"
-      v-model:pagination="pagination"
       separator="cell"
       row-key="name"
       :filter="filter"

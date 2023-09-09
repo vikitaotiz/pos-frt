@@ -10,10 +10,6 @@ export const useAuthStore = defineStore("auth", {
     user: storedUser(),
   }),
 
-  // getters: {
-  //   doubleCount: (state) => state.counter * 2,
-  // },
-
   actions: {
     saveUser(data) {
       localStorage.setItem("auth_user", JSON.stringify(data));
@@ -41,8 +37,8 @@ export const useAuthStore = defineStore("auth", {
       if (this.user?.token) {
         const res = await post_call_logout("logout", this.user?.token);
         if (res.status === "success") {
-          this.removeUser(res);
           this.user = null;
+          this.removeUser();
           return res;
         }
       } else {

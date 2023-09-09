@@ -70,6 +70,17 @@ const routes = [
         component: () => import("pages/PaymentModes.vue"),
         name: "payment_modes",
       },
+
+      {
+        path: "/accounts",
+        component: () => import("pages/Accounts.vue"),
+        name: "accounts",
+      },
+      {
+        path: "/logout_page",
+        component: () => import("pages/LogoutPage.vue"),
+        name: "logout_page",
+      },
       {
         path: "/settings",
         component: () => import("pages/Settings.vue"),
@@ -78,12 +89,36 @@ const routes = [
           const stored_user = storedUser();
 
           const isAdmin = stored_user?.user?.roles.some(
-            (role) => role["name"] === "Administrator"
+            (role) => role["name"] === "Admin"
           );
 
           if (isAdmin) return true;
           else return false;
         },
+      },
+
+      {
+        path: "/trash",
+        component: () => import("pages/SystemTrash.vue"),
+        name: "trash",
+      },
+
+      {
+        path: "/clear_bills",
+        component: () => import("pages/ClearBills.vue"),
+        name: "clear_bills",
+      },
+
+      {
+        path: "/measurements",
+        component: () => import("pages/Measurements.vue"),
+        name: "measurements",
+      },
+
+      {
+        path: "/debtors",
+        component: () => import("pages/Debtors.vue"),
+        name: "debtors",
       },
     ],
   },
@@ -93,6 +128,12 @@ const routes = [
   {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
+  },
+
+  {
+    path: "/verify_bill",
+    component: () => import("pages/VerifyBill.vue"),
+    name: "verify_bill",
   },
 ];
 

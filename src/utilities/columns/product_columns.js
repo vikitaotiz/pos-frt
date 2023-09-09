@@ -9,6 +9,42 @@ const product_columns = [
     sortable: true,
   },
   {
+    name: "measurement",
+    align: "center",
+    label: "Measurement & Qty",
+    field: "measurement",
+    sortable: true,
+  },
+
+  {
+    name: "min_quantity",
+    align: "center",
+    label: "Min Qty",
+    field: "min_quantity",
+    sortable: true,
+  },
+  {
+    name: "buying_price",
+    align: "center",
+    label: "Buying Price (Per Unit)",
+    field: "buying_price",
+    sortable: true,
+  },
+  {
+    name: "selling_price",
+    align: "center",
+    label: "Selling Price (Per Unit)",
+    field: "selling_price",
+    sortable: true,
+  },
+  {
+    name: "department",
+    align: "center",
+    label: "Department",
+    field: "department",
+    sortable: true,
+  },
+  {
     name: "category",
     align: "center",
     label: "Category",

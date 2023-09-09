@@ -8,7 +8,6 @@
       title="Categories"
       :rows="categories"
       :columns="category_columns"
-      v-model:pagination="pagination"
       separator="cell"
       row-key="name"
       :filter="filter"
@@ -32,7 +31,11 @@
             {{ props.row.created_at }}
           </q-td>
 
-          <q-td key="actions" :props="props">
+          <q-td
+            key="actions"
+            :props="props"
+            v-if="hasPermission(auth_store?.user?.user?.roles)"
+          >
             <q-icon
               color="blue"
               name="edit"
@@ -42,6 +45,7 @@
               class="q-mr-md"
             />
             <q-icon
+              v-if="props.row.products.length === 0"
               color="red"
               name="delete"
               @click="deleteCategory(props.row)"
@@ -68,25 +72,28 @@
           </template>
         </q-input>
 
-        <q-btn
-          @click="openAddNewCategoryDialog"
-          round
-          dense
-          color="primary"
-          size="small"
-          icon="add"
-        />
+        <q-btn-group v-if="hasPermission(auth_store?.user?.user?.roles)">
+          <q-btn
+            @click="openAddNewCategoryDialog"
+            round
+            dense
+            color="primary"
+            icon="add"
+            label="Add"
+          />
 
-        <q-btn
-          dense
-          flat
-          color="primary"
-          icon-right="archive"
-          label="Export"
-          class="q-ml-sm"
-          no-caps
-          @click="exportExcel(categories)"
-        />
+          <q-btn
+            v-if="categories?.length > 0"
+            dense
+            flat
+            color="primary"
+            icon-right="archive"
+            label="Export"
+            class="q-ml-sm"
+            no-caps
+            @click="exportExcel(categories)"
+          />
+        </q-btn-group>
       </template>
     </q-table>
 
@@ -113,6 +120,7 @@
             label="Add Category"
             color="primary"
             @click="addNewCategory"
+            :loading="loadingCategoryBtn"
           />
 
           <q-btn
@@ -121,6 +129,7 @@
             label="Edit Category"
             color="primary"
             @click="editSelectedCategory"
+            :loading="loadingCategoryBtn"
           />
         </q-card-actions>
       </q-card>
@@ -134,18 +143,20 @@ import { ref } from "vue";
 import { exportFile, useQuasar } from "quasar";
 import { useQuery, useQueryClient } from "vue-query";
 import { category_columns } from "src/utilities/columns/category_columns";
-import { paginations } from "src/utilities/paginations";
 import { useCategoryStore } from "src/stores/category-store";
 import { exportTable } from "src/utilities/excel";
+import { useAuthStore } from "src/stores/auth-store";
+import { hasPermission } from "src/utilities/helpers";
 
+const auth_store = useAuthStore();
 // Global and store initialization
 const $q = useQuasar();
 const queryClient = useQueryClient();
 const category_store = useCategoryStore();
-const pagination = paginations(10);
 
 // Local variables
 const addEditCategory = ref(false);
+const loadingCategoryBtn = ref(false);
 const edit_category = ref(false);
 const filter = ref("");
 const form_title = ref("");
@@ -190,6 +201,7 @@ const openEditCategoryDialog = (category) => {
 
 // Create new category method
 const addNewCategory = async () => {
+  loadingCategoryBtn.value = true;
   errorMsg.value = "";
 
   if (category_name.value.trim()) {
@@ -200,9 +212,12 @@ const addNewCategory = async () => {
       queryClient.refetchQueries("categories");
       category_name.value = "";
       addEditCategory.value = false;
+      loadingCategoryBtn.value = false;
 
       notifyUser(res.message, "green", "top");
     } else {
+      loadingCategoryBtn.value = false;
+
       errorMsg.value = res.message;
       notifyUser(res.message, "red", "top-right");
     }
@@ -214,6 +229,8 @@ const addNewCategory = async () => {
 
 // Edit category method
 const editSelectedCategory = async () => {
+  loadingCategoryBtn.value = true;
+
   const dt = {
     name: category_name.value.trim(),
     uuid: category_id.value,
@@ -228,10 +245,13 @@ const editSelectedCategory = async () => {
       addEditCategory.value = false;
       edit_category.value = false;
       form_title.value = "";
+      loadingCategoryBtn.value = false;
 
       notifyUser(res.message, "green", "top");
     } else notifyUser("There was an error", "red", "top-right");
   } else {
+    loadingCategoryBtn.value = false;
+
     errorMsg.value = "Name is required!";
     notifyUser("Name is required!", "red", "top-right");
   }

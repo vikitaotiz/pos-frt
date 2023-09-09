@@ -23,7 +23,7 @@ export const useProductStore = defineStore("products", {
     },
 
     async createProduct(payload) {
-      payload.uuid = user?.user?.uuid;
+      payload.user_uuid = user?.user?.uuid;
 
       if (token) {
         const res = await post_call_module(payload, "products", token);
@@ -32,6 +32,7 @@ export const useProductStore = defineStore("products", {
     },
 
     async updateProduct(payload) {
+      payload.user_uuid = user?.user?.uuid;
       if (token) {
         const res = await post_call_module(payload, "update_product", token);
         return res;

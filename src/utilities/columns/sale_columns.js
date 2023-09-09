@@ -23,6 +23,20 @@ const sale_columns = [
     sortable: true,
   },
   {
+    name: "bill_ref",
+    align: "center",
+    label: "Bill Ref",
+    field: "bill_ref",
+    sortable: true,
+  },
+  {
+    name: "payment_mode",
+    align: "center",
+    label: "Mode",
+    field: "payment_mode",
+    sortable: true,
+  },
+  {
     name: "user",
     align: "center",
     label: "Created By",
@@ -36,12 +50,12 @@ const sale_columns = [
     field: "created_at",
     sortable: true,
   },
-  {
-    name: "actions",
-    align: "center",
-    label: "Actions",
-    field: "created_at",
-  },
+  // {
+  //   name: "actions",
+  //   align: "center",
+  //   label: "Actions",
+  //   field: "created_at",
+  // },
 ];
 
 export { sale_columns };

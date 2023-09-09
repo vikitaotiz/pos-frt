@@ -8,7 +8,6 @@
       title="Departments"
       :rows="departments"
       :columns="department_columns"
-      v-model:pagination="pagination"
       separator="cell"
       row-key="name"
       :filter="filter"

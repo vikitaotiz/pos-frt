@@ -22,8 +22,19 @@ export const useInventoryStore = defineStore("inventories", {
       }
     },
 
+    async fetchInventoriesInDateRange(payload) {
+      if (token) {
+        const res = await post_call_module(
+          payload,
+          "get_older_inventories",
+          token
+        );
+        return res;
+      }
+    },
+
     async createInventory(payload) {
-      payload.uuid = user?.user?.uuid;
+      payload.user_uuid = user?.user?.uuid;
 
       if (token) {
         const res = await post_call_module(payload, "inventories", token);

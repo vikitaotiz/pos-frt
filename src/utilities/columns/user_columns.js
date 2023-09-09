@@ -16,6 +16,27 @@ const user_columns = [
     sortable: true,
   },
   {
+    name: "phone",
+    align: "center",
+    label: "Phone",
+    field: "phone",
+    sortable: true,
+  },
+  {
+    name: "email_notify",
+    align: "center",
+    label: "Email Notify",
+    field: "email_notify",
+    sortable: true,
+  },
+  // {
+  //   name: "whatsapp_notify",
+  //   align: "center",
+  //   label: "Whatsapp Notify",
+  //   field: "whatsapp_notify",
+  //   sortable: true,
+  // },
+  {
     name: "roles",
     align: "center",
     label: "Roles",
@@ -32,7 +53,7 @@ const user_columns = [
   {
     name: "active",
     align: "center",
-    label: "Status",
+    label: "User Status",
     field: "active",
     sortable: true,
   },

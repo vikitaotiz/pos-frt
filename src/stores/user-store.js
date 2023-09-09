@@ -11,6 +11,7 @@ const token = user?.token;
 export const useUserStore = defineStore("users", {
   state: () => ({
     users: [],
+    access_granted: false,
   }),
 
   actions: {
@@ -23,7 +24,7 @@ export const useUserStore = defineStore("users", {
     },
 
     async createUser(payload) {
-      payload.uuid = user?.user?.uuid;
+      payload.user_uuid = user?.user?.uuid;
 
       if (token) {
         const res = await post_call_module(payload, "users", token);
@@ -41,6 +42,25 @@ export const useUserStore = defineStore("users", {
     async deleteUser(payload) {
       if (token) {
         const res = await post_call_module(payload, "delete_user", token);
+        return res;
+      }
+    },
+
+    async confirmAdmin(payload) {
+      if (token) {
+        const res = await post_call_module(payload, "confirm_admin", token);
+        return res;
+      }
+    },
+
+    async verifyAccessToken(payload) {
+      if (token) {
+        const res = await post_call_module(
+          payload,
+          "verify_access_token",
+          token
+        );
+        this.access_granted = res.access_granted;
         return res;
       }
     },

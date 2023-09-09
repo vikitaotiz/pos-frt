@@ -1,98 +1,57 @@
 <template>
-  <div>
-    <q-card :class="$q.dark.isActive ? 'bg-dark' : ''">
-      <q-card-section class="text-h6"> Product Categories </q-card-section>
-      <q-card-section>
-        <ECharts
-          ref="piechart"
-          :option="options"
-          class="q-mt-md"
-          :resizable="true"
-          autoresize
-          style="height: 250px"
-        />
-      </q-card-section>
-    </q-card>
-  </div>
+  <q-card style="border-radius: 8px" v-if="series.length > 0">
+    <q-card-section>
+      <apexchart
+        v-if="series.length > 0"
+        type="pie"
+        :options="options"
+        :series="series"
+        :height="358"
+      ></apexchart>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import ECharts from "vue-echarts";
-import { useQuasar } from "quasar";
+import { reactive, ref } from "vue";
+import { getCssVar } from "quasar";
 import { useQuery } from "vue-query";
-import { useCategoryStore } from "src/stores/category-store";
 
-const $q = useQuasar();
-const category_store = useCategoryStore();
+import { useAccountStore } from "src/stores/account-store";
+
+const account_store = useAccountStore();
+
+useQuery("today_product_sales", () => account_store.fetchTodayProductSales(), {
+  onSuccess: (data) => {
+    series.value = data.map((val) => val.quantity);
+    options.labels = data.map((val) => val.name);
+  },
+});
 
 const options = reactive({
-  tooltip: {
-    trigger: "item",
-    formatter: "{a} <br/>{b}: {c} ({d}%)",
+  title: {
+    text: "Todays Product Sales",
+    align: "left",
   },
-  legend: {
-    top: "bottom",
-    bottom: "5%",
-    left: "center",
+  chart: {
+    id: "apex-donut",
   },
-  series: [
-    {
-      name: "Category",
-      type: "pie",
-      radius: ["40%", "70%"],
-      center: ["50%", "45%"],
-      avoidLabelOverlap: false,
-      itemStyle: {
-        borderRadius: 10,
-        borderColor: "#fff",
-        borderWidth: 2,
-      },
-      label: {
-        show: false,
-        position: "center",
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: "40",
-          fontWeight: "bold",
-        },
-      },
-      labelLine: {
-        show: false,
-      },
-      data: [
-        // { value: 1048, name: "Search Engine" },
-        // { value: 735, name: "Direct access" },
-        // { value: 580, name: "Email marketing" },
-        // { value: 484, name: "Affiliate Advertising" },
-        // { value: 300, name: "Video ad" },
-      ],
-    },
+  colors: [
+    getCssVar("secondary"),
+    getCssVar("accent"),
+    getCssVar("positive"),
+    getCssVar("primary"),
+    getCssVar("negative"),
+    getCssVar("info"),
   ],
-});
-
-useQuery("categories", () => category_store.fetchCategories(), {
-  onSuccess: (data) => {
-    const dt = data.map((val) => {
-      return {
-        name: val.name,
-        products: val.products.length,
-        created_at: val.created_at,
-      };
-    });
-
-    options.series[0].data = [];
-
-    dt.forEach((val) => {
-      options.series[0].data.push({
-        value: val.products,
-        name: val.name,
-      });
-    });
+  markers: {
+    size: 4,
+    hover: {
+      sizeOffset: 6,
+    },
   },
+  labels: [],
 });
-</script>
 
-<style scoped></style>
+const series = ref([]);
+</script>

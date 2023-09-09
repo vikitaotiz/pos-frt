@@ -1,4 +1,4 @@
-import { base_url } from "../helpers";
+import { base_url, forceLogout } from "../helpers";
 
 const get_call_module = async (path, token) => {
   const res = await fetch(`${base_url}/${path}`, {
@@ -7,6 +7,8 @@ const get_call_module = async (path, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  forceLogout(res.status);
 
   const res_data = res.json();
 
@@ -22,6 +24,8 @@ const post_call_module = async (body, path, token) => {
     },
     body: JSON.stringify(body),
   });
+
+  forceLogout(res.status);
 
   const res_data = res.json();
 

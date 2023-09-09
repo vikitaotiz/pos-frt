@@ -1,7 +1,11 @@
 <template>
-  <q-card class="q-pa-sm">
+  <q-card
+    style="border-radius: 8px"
+    class="q-pa-sm"
+    v-if="series[0].data.length > 0"
+  >
     <apexchart
-      height="300"
+      v-if="series[0].data.length"
       type="bar"
       :options="options"
       :series="series"
@@ -17,25 +21,6 @@ import { useSaleStore } from "src/stores/sale-store";
 
 const sale_store = useSaleStore();
 
-const get_days = () => {
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  const dates = [...Array(7)].map((_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    return days[d.getDay()];
-  });
-
-  return dates.reverse();
-};
-
 const options = reactive({
   title: {
     text: "Sales Records for the last seven days",
@@ -47,7 +32,17 @@ const options = reactive({
   colors: [getCssVar("primary"), getCssVar("secondary"), getCssVar("negative")],
   xaxis: {
     categories: [],
+    title: {
+      text: "Date/Days",
+    },
   },
+
+  yaxis: {
+    title: {
+      text: "Amount",
+    },
+  },
+
   plotOptions: {
     bar: {
       horizontal: false,
@@ -65,18 +60,8 @@ const series = ref([
 
 useQuery("sales", () => sale_store.fetchSevenDaysSales(), {
   onSuccess: (data) => {
-    options.xaxis.categories = [];
-
-    const days = data.map((val) => val.day);
-    const sales = data.map((val) => val.sales);
-
-    options.xaxis.categories = days;
-
-    console.log(convert_to_array(options.xaxis.categories));
-
-    series.value[0].data = sales;
+    options.xaxis.categories = data.map((val) => val.day)?.reverse();
+    series.value[0].data = data.map((val) => val.sales)?.reverse();
   },
 });
-
-const convert_to_array = (arr) => JSON.parse(JSON.stringify(arr));
 </script>

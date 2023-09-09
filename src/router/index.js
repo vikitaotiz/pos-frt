@@ -39,7 +39,7 @@ export default route(function (/* { store, ssrContext } */) {
     const stored_user = storedUser();
 
     if (!stored_user?.token && to.name !== "auth") return { name: "auth" };
-    else if (stored_user?.token && to.name == "auth") return Router.back();
+    else if (stored_user?.token && to.name === "auth") return Router.back();
     else return true;
   });
 

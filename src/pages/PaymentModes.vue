@@ -8,7 +8,6 @@
       title="PaymentModes"
       :rows="payment_modes"
       :columns="payment_mode_columns"
-      v-model:pagination="pagination"
       separator="cell"
       row-key="name"
       :filter="filter"
@@ -113,6 +112,7 @@
             label="Add PaymentMode"
             color="primary"
             @click="addNewPaymentMode"
+            :loading="loadingPaymentModeBtn"
           />
 
           <q-btn
@@ -121,6 +121,7 @@
             label="Edit PaymentMode"
             color="primary"
             @click="editSelectedPaymentMode"
+            :loading="loadingPaymentModeBtn"
           />
         </q-card-actions>
       </q-card>
@@ -147,6 +148,8 @@ const pagination = paginations(10);
 // Local variables
 const addEditPaymentMode = ref(false);
 const edit_payment_mode = ref(false);
+const loadingPaymentModeBtn = ref(false);
+
 const filter = ref("");
 const form_title = ref("");
 const payment_mode_name = ref("");
@@ -194,6 +197,7 @@ const openEditPaymentModeDialog = (payment_mode) => {
 
 // Create new payment_mode method
 const addNewPaymentMode = async () => {
+  loadingPaymentModeBtn.value = true;
   errorMsg.value = "";
 
   if (payment_mode_name.value.trim()) {
@@ -206,18 +210,23 @@ const addNewPaymentMode = async () => {
       addEditPaymentMode.value = false;
 
       notifyUser(res.message, "green", "top");
+      loadingPaymentModeBtn.value = false;
     } else {
       errorMsg.value = res.message;
       notifyUser(res.message, "red", "top-right");
+      loadingPaymentModeBtn.value = false;
     }
   } else {
     errorMsg.value = "Name is required!";
     notifyUser("Name is required!", "red", "top-right");
+    loadingPaymentModeBtn.value = false;
   }
 };
 
 // Edit payment_mode method
 const editSelectedPaymentMode = async () => {
+  loadingPaymentModeBtn.value = true;
+
   const dt = {
     name: payment_mode_name.value.trim(),
     uuid: payment_mode_id.value,
@@ -234,10 +243,16 @@ const editSelectedPaymentMode = async () => {
       form_title.value = "";
 
       notifyUser(res.message, "green", "top");
-    } else notifyUser("There was an error", "red", "top-right");
+      loadingPaymentModeBtn.value = false;
+    } else {
+      loadingPaymentModeBtn.value = false;
+
+      notifyUser("There was an error", "red", "top-right");
+    }
   } else {
     errorMsg.value = "Name is required!";
     notifyUser("Name is required!", "red", "top-right");
+    loadingPaymentModeBtn.value = false;
   }
 };
 

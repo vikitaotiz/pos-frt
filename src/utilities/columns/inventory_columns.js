@@ -1,11 +1,46 @@
 const inventory_columns = [
   {
-    name: "name",
+    name: "product",
     required: true,
-    label: "Name",
+    label: "Product",
     align: "left",
     field: (row) => row.name,
     format: (val) => `${val}`,
+    sortable: true,
+  },
+  {
+    name: "buying_price",
+    align: "center",
+    label: "Buying Price (Per Unit)",
+    field: "buying_price",
+    sortable: true,
+  },
+  {
+    name: "quantity",
+    align: "center",
+    label: "Quantity",
+    field: "quantity",
+    sortable: true,
+  },
+  {
+    name: "total",
+    align: "center",
+    label: "Total Cost",
+    field: "total",
+    sortable: true,
+  },
+  {
+    name: "measurement",
+    align: "center",
+    label: "Measurement",
+    field: "measurement",
+    sortable: true,
+  },
+  {
+    name: "department",
+    align: "center",
+    label: "Department",
+    field: "department",
     sortable: true,
   },
   {
